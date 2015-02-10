@@ -1,8 +1,8 @@
 ﻿
 using System;
 
-using MonoMac.AppKit;
-using MonoMac.Foundation;
+using AppKit;
+using Foundation;
 
 using FileReaderWithProgress;
 
@@ -11,6 +11,19 @@ namespace MacFileReader
 	public partial class MainWindowController : NSWindowController
 	{
 		Reader reader;
+		string _fileName;
+
+		public string Filename {
+			get {
+				return _fileName;
+			} 
+			set {
+				_fileName = value;
+				Window.Title = _fileName;
+			}
+		}
+
+
 		#region Constructors
 
 		// Called when created from unmanaged code
@@ -36,8 +49,6 @@ namespace MacFileReader
 		void Initialize ()
 		{
 			reader = new Reader ();
-			// NOTE, file is hardcoded. You'll have to change it here.
-			reader.Filename = "/Users/sshaw/tmp/output.mlpd";
 			reader.PercentageRead = UpdateProgress;
 		}
 
@@ -53,12 +64,31 @@ namespace MacFileReader
 			ProgressBarOutlet.MaxValue = 100.0;
 			ProgressBarOutlet.DoubleValue = 0.0;
 			ProgressBarOutlet.Indeterminate = false;
+			reader.Reset ();
+
+			int bufferSize;
+			if (int.TryParse (ChunkSizeTextField.StringValue, out bufferSize))
+				reader.BufferSize = bufferSize;
+
+			reader.Filename = Filename;
+		}
+
+		partial void FileButtonAction (NSObject sender)
+		{
+			var openPanel = new NSOpenPanel ();
+
+			openPanel.FloatingPanel = true;
+			openPanel.CanChooseFiles = true;
+			openPanel.CanChooseDirectories = false;
+
+			if (openPanel.RunModal () == 1) {
+				Filename = openPanel.Url.Path;
+			}
 		}
 
 		partial void StartButtonAction (NSObject sender)
 		{
 			Reset ();
-			reader.Reset ();
 			reader.Read ();
 		}
 

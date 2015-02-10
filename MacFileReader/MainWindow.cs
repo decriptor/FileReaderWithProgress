@@ -1,7 +1,7 @@
-﻿
-using System;
-using MonoMac.AppKit;
-using MonoMac.Foundation;
+﻿using System;
+
+using AppKit;
+using Foundation;
 
 namespace MacFileReader
 {

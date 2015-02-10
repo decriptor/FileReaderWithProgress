@@ -1,5 +1,5 @@
-﻿using MonoMac.AppKit;
-using MonoMac.Foundation;
+﻿using AppKit;
+using Foundation;
 
 namespace MacFileReader
 {
@@ -7,11 +7,7 @@ namespace MacFileReader
 	{
 		MainWindowController mainWindowController;
 
-		public AppDelegate ()
-		{
-		}
-
-		public override void FinishedLaunching (NSObject notification)
+		public override void DidFinishLaunching (NSNotification notification)
 		{
 			mainWindowController = new MainWindowController ();
 			mainWindowController.Window.MakeKeyAndOrderFront (this);

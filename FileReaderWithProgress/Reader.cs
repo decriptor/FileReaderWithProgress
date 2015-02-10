@@ -8,6 +8,7 @@ namespace FileReaderWithProgress
 	public class Reader
 	{
 		public string Filename { get; set; }
+		public int BufferSize { get; set; }
 		public Action<double> PercentageRead;
 		CancellationTokenSource cancellationTokenSource;
 
@@ -19,12 +20,14 @@ namespace FileReaderWithProgress
 		public void Reset ()
 		{
 			cancellationTokenSource = new CancellationTokenSource();
+			BufferSize = 1024 * 1024;
 		}
 
 		public async Task Read ()
 		{
 			// NOTE, You can play with the buffer size to change how fast the reader reads
-			var buffer = new byte[1024 * 1024]; // 1MB buffer
+			Console.WriteLine ("Buffer size: {0}", BufferSize);
+			var buffer = new byte[BufferSize]; // 1MB buffer
 
 			using (var fs = new FileStream (Filename, FileMode.Open))
 			{
@@ -50,6 +53,7 @@ namespace FileReaderWithProgress
 
 		void OnProgressChanged (double percentage)
 		{
+			Console.WriteLine ("[Progress] {0:##.##}% of 100.0%", percentage);
 			var handler = PercentageRead;
 			if (handler != null)
 				handler (percentage);
